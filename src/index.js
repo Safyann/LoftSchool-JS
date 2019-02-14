@@ -45,7 +45,7 @@ function reduce(array, fn, initial) {
         i++;
     }
 
-    for (; i < array.length; i++) {
+    for (i; i < array.length; i++) {
         prev = fn(prev, array[i], i, array);
     }
 
@@ -78,7 +78,7 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
-function slice(array, from, to) {
+function slice(array, from = 0, to) {
     const newArr = [];
 
     if (to === undefined || to > array.length) {
@@ -89,8 +89,8 @@ function slice(array, from, to) {
         to = array.length + to;
     }
 
-    if (from === undefined || from < 0) {
-        from = 0;
+    if (from < 0) {
+        from = array.length + from;
     }
 
     for (let i = from; i < to; i++) {
@@ -109,7 +109,7 @@ function slice(array, from, to) {
 function createProxy(obj) {
     return new Proxy (obj, {
         set(target, prop, value) {
-            target[prop] = value* value;
+            target[prop] = value * value;
             
             return true;
         }
