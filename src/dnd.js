@@ -27,6 +27,19 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    const div = document.createElement('div');
+
+    div.classList.add('draggable-div');
+    div.style.backgroundColor = `RGB(${Math.floor(Math.random() * 256)},
+                                ${Math.floor(Math.random() * 256)},
+                                ${Math.floor(Math.random() * 256)})`;
+    div.style.width = `${Math.floor(Math.random() * 100)}px`;
+    div.style.height = `${Math.floor(Math.random() * 100)}px`;
+    div.style.top = `${Math.floor(Math.random() * 100)}px`;
+    div.style.left = `${Math.floor(Math.random() * 100)}px`;
+    div.style.position = 'absolute';
+
+    return div;
 }
 
 /*
@@ -38,11 +51,49 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.onmousedown = function (e) {
+        var coords = getCoords(target);
+        var shiftX = e.pageX - coords.left;
+        var shiftY = e.pageY - coords.top;
+
+        target.style.position = 'absolute';
+        document.body.appendChild(target);
+        moveAt(e);
+
+        target.style.zIndex = 1000;
+
+        function moveAt(e) {
+            target.style.left = e.pageX - shiftX + 'px';
+            target.style.top = e.pageY - shiftY + 'px';
+        }
+
+        document.onmousemove = function (e) {
+            moveAt(e);
+        }
+
+        target.onmouseup = function () {
+            document.onmousemove = null;
+            target.onmouseup = null;
+        }
+    }
+
+    target.ondragstart = function() {
+        return false;
+    };
+      
+    function getCoords(elem) {
+        var box = elem.getBoundingClientRect();
+
+        return {
+            top: box.top + pageYOffset,
+            left: box.left + pageXOffset
+        };
+    }
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
-addDivButton.addEventListener('click', function() {
+addDivButton.addEventListener('click', function () {
     // создать новый div
     const div = createDiv();
 
