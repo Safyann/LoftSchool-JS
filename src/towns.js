@@ -106,25 +106,26 @@ const errorBlock = homeworkContainer.querySelector('#error-block');
 /* Кнопка перезагрузки данных */
 const reloadBtn = homeworkContainer.querySelector('#reload-input');
 
+let towns;
+
+loadTowns().then((data) => {
+    towns = data;
+})
+
 filterInput.addEventListener('keyup', function () {
     // это обработчик нажатия кливиш в текстовом поле
-    loadTowns()
-        .then (towns => {
-            filterResult.innerHTML = '';
-            for (let town of towns) {
-                if (isMatching(town.name, filterInput.value) && filterInput.value != 0) {
-                    const div = document.createElement('div');
+    filterResult.innerHTML = '';
+    for (let town of towns) {
+        if (isMatching(town.name, filterInput.value) && filterInput.value != 0) {
+            const div = document.createElement('div');
 
-                    div.textContent = town.name;
-                    filterResult.appendChild(div);
-                }
-            }
-        })
+            div.textContent = town.name;
+            filterResult.appendChild(div);
+        }
+    }
 });
 
 reloadBtn.addEventListener('click', () => loadTowns());
-
-loadTowns();
 
 export {
     loadTowns,
