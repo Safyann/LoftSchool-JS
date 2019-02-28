@@ -124,6 +124,8 @@ filterInput.addEventListener('keyup', function () {
 
 reloadBtn.addEventListener('click', () => loadTowns());
 
+loadTowns();
+
 export {
     loadTowns,
     isMatching
