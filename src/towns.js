@@ -28,6 +28,10 @@
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
+import {
+    loadAndSortTowns as loadTowns
+} from '../src/index';
+
 const homeworkContainer = document.querySelector('#homework-container');
 
 /*
@@ -36,41 +40,16 @@ const homeworkContainer = document.querySelector('#homework-container');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    hideAllElements();
-    loadingBlock.style.display = 'block';
-
-    return fetch('//raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
-        .then(response => {
-            if (response.status >= 400) {
-                hideAllElements();
-                errorBlock.style.display = 'block';
-
-                return Promise.reject();
-            }
-
-            return response.json()
-                .then(data => {
-                    hideAllElements();
-                    filterBlock.style.display = 'block';
-
-                    return data.sort((a, b) => {
-                        a = a.name;
-                        b = b.name;
-
-                        let result = 0;
-
-                        if (a < b) {
-                            result = -1;
-                        } else if (b > a) {
-                            result = 1;
-                        }
-
-                        return result;
-                    });
-                })
-        });
-}
+loadTowns()
+    .then((data) => {
+        towns = data;
+        hideAllElements();
+        filterBlock.style.display = 'block';
+    })
+    .catch(() => {
+        hideAllElements();
+        errorBlock.style.display = 'block';
+    });
 
 function hideAllElements() {
     loadingBlock.style.display = 'none';
@@ -107,10 +86,6 @@ const errorBlock = homeworkContainer.querySelector('#error-block');
 const reloadBtn = homeworkContainer.querySelector('#reload-input');
 
 let towns;
-
-loadTowns().then((data) => {
-    towns = data;
-})
 
 filterInput.addEventListener('keyup', function () {
     // это обработчик нажатия кливиш в текстовом поле
