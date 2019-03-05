@@ -55,9 +55,6 @@ addButton.addEventListener('click', () => {
     document.cookie = `${addNameInput.value} = ${addValueInput.value}`;
 
     reloadTable();
-
-    addNameInput.value = '';
-    addValueInput.value = '';
 });
 
 function getCookies() {
@@ -86,6 +83,10 @@ function reloadTable() {
                 tdValue = document.createElement('td'),
                 tdDel = document.createElement('td'),
                 delBtn = document.createElement('button');
+
+            tdName.classList.add('coockie-name');
+            tdValue.classList.add('coockie-value');
+            tdDel.classList.add('coockie-del');
 
             delBtn.innerHTML = 'Удалить';
             tdName.innerHTML = cookie;
@@ -120,13 +121,11 @@ function getFilteredCookies() {
     const filtered = {};
     const filterValue = filterNameInput.value;
 
-    listTable.innerHTML = '';
-
-    for (let cookieName in cookies) {
+    for (let cookie in cookies) {
         if (filterValue.length == 0) {
-            filtered[cookieName] = cookies[cookieName];
-        } else if (isMatching(cookieName, filterValue)) {
-            filtered[cookieName] = cookies[cookieName];
+            filtered[cookie] = cookies[cookie];
+        } else if (isMatching(cookie, filterValue) || isMatching(cookies[cookie], filterValue)) {
+            filtered[cookie] = cookies[cookie];
         }
     }
 
