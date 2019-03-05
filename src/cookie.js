@@ -42,21 +42,17 @@ const addValueInput = homeworkContainer.querySelector('#add-value-input');
 const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
-// Получаем все куки пользователя
-const cookies = getCookies();
-
-// создаем таблицу с куками
-createTable();
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    reloadTable();
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
     document.cookie = `${addNameInput.value} = ${addValueInput.value}`;
 
-    addRow();
+    reloadTable();
 
     addNameInput.value = '';
     addValueInput.value = '';
@@ -76,7 +72,11 @@ function deleteCookie(name) {
     document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-function createTable() {
+function reloadTable() {
+    const cookies = getFilteredCookies();
+    
+    clearTable();
+
     for (const cookie in cookies) {
         if (cookies.hasOwnProperty(cookie)) {
             const tr = document.createElement('tr'),
@@ -103,25 +103,30 @@ function createTable() {
     }
 }
 
-function addRow() {
-    const tr = document.createElement('tr'),
-        tdName = document.createElement('td'),
-        tdValue = document.createElement('td'),
-        tdDel = document.createElement('td'),
-        delBtn = document.createElement('button');
+function clearTable() {
+    while (listTable.rows.length>0) {
+        listTable.deleteRow(0);
+    }
+}
 
-    delBtn.innerHTML = 'Удалить';
-    tdName.innerHTML = addNameInput.value;
-    tdValue.innerHTML = addValueInput.value|| '';
+function isMatching(full, chunk) {
+    return full.toLowerCase().includes(chunk.toLowerCase());
+}
 
-    tdDel.appendChild(delBtn);
-    tr.appendChild(tdName);
-    tr.appendChild(tdValue);
-    tr.appendChild(tdDel);
-    listTable.appendChild(tr);
+function getFilteredCookies() {
+    const cookies = getCookies();
+    const filtered = {};
+    const filterValue = filterNameInput.value;
 
-    delBtn.addEventListener('click', (e) => {
-        deleteCookie(tdName.innerHTML);
-        e.target.parentNode.parentNode.remove();
-    }); 
+    listTable.innerHTML = '';
+
+    for (let cookieName in cookies) {
+        if (filterValue.length == 0) {
+            filtered[cookieName] = cookies[cookieName];
+        } else if (isMatching(cookieName, filterValue)) {
+            filtered[cookieName] = cookies[cookieName];
+        }
+    }
+
+    return filtered;
 }
